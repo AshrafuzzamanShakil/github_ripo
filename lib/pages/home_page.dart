@@ -6,6 +6,12 @@ import 'package:github_rioi/modul/repository_model.dart';
 import 'package:github_rioi/pages/repository_details_page.dart';
 import 'package:github_rioi/modul/user_model.dart';
 
+enum RepositoryFilter {
+  all,
+  starred,
+  forked,
+}
+
 class HomePage extends StatefulWidget {
   final String username;
 
@@ -19,6 +25,7 @@ class _HomePageState extends State<HomePage> {
   late Future<User> _userFuture;
   late Future<List<GitHubRepository>> _repositoriesFuture;
   bool _isGridView = false;
+  RepositoryFilter _currentFilter = RepositoryFilter.all;
 
   @override
   void initState() {
@@ -59,6 +66,7 @@ class _HomePageState extends State<HomePage> {
           language: repo['language'] ?? '',
           createdAt: repo['created_at'],
           htmlUrl: repo['html_url'],
+          forked: repo['fork'],
         );
       }).toList();
     } else {
@@ -81,6 +89,19 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  List<GitHubRepository> _filterRepositories(List<GitHubRepository> repositories) {
+    switch (_currentFilter) {
+      case RepositoryFilter.all:
+        return repositories;
+      case RepositoryFilter.starred:
+        return repositories.where((repo) => repo.stars > 0).toList();
+      case RepositoryFilter.forked:
+        return repositories.where((repo) => repo.forked).toList();
+      default:
+        return repositories;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,6 +111,27 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             onPressed: _toggleView,
             icon: Icon(_isGridView ? Icons.view_list : Icons.grid_view),
+          ),
+          PopupMenuButton<RepositoryFilter>(
+            onSelected: (filter) {
+              setState(() {
+                _currentFilter = filter;
+              });
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: RepositoryFilter.all,
+                child: Text('All'),
+              ),
+              PopupMenuItem(
+                value: RepositoryFilter.starred,
+                child: Text('Starred'),
+              ),
+              PopupMenuItem(
+                value: RepositoryFilter.forked,
+                child: Text('Forked'),
+              ),
+            ],
           ),
         ],
       ),
@@ -139,6 +181,8 @@ class _HomePageState extends State<HomePage> {
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         final repositories = snapshot.data as List<GitHubRepository>;
+                        final filteredRepositories = _filterRepositories(repositories);
+
                         return _isGridView
                             ? GridView.builder(
                                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -146,9 +190,9 @@ class _HomePageState extends State<HomePage> {
                                   crossAxisSpacing: 8.0,
                                   mainAxisSpacing: 8.0,
                                 ),
-                                itemCount: repositories.length,
+                                itemCount: filteredRepositories.length,
                                 itemBuilder: (context, index) {
-                                  final repository = repositories[index];
+                                  final repository = filteredRepositories[index];
                                   return GestureDetector(
                                     onTap: () => _navigateToRepositoryDetails(repository),
                                     child: Card(
@@ -170,9 +214,9 @@ class _HomePageState extends State<HomePage> {
                                 },
                               )
                             : ListView.builder(
-                                itemCount: repositories.length,
+                                itemCount: filteredRepositories.length,
                                 itemBuilder: (context, index) {
-                                  final repository = repositories[index];
+                                  final repository = filteredRepositories[index];
                                   return ListTile(
                                     title: Text(repository.name),
                                     subtitle: Text(repository.description),
@@ -199,5 +243,5 @@ class _HomePageState extends State<HomePage> {
         },
       ),
     );
-     }
+  }
 }

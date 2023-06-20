@@ -1,27 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:github_rioi/pages/home_page.dart';
+import 'package:get/get.dart';
 
-class InputPage extends StatefulWidget {
-  @override
-  _InputPageState createState() => _InputPageState();
+void main() {
+  runApp(MyApp());
 }
 
-class _InputPageState extends State<InputPage> {
-  bool _isDarkMode = false;
-  ValueNotifier<ThemeData> _themeNotifier = ValueNotifier(ThemeData.light());
-
-  void _toggleTheme() {
-    setState(() {
-      _isDarkMode = !_isDarkMode;
-    });
-    _themeNotifier.value = _isDarkMode ? ThemeData.dark() : ThemeData.light();
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return GetMaterialApp(
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
+      home: InputPage(),
+    );
   }
+}
 
-
+class InputPage extends StatelessWidget {
   final TextEditingController usernameController = TextEditingController();
-
-  
-
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +28,9 @@ class _InputPageState extends State<InputPage> {
         actions: [
           IconButton(
             icon: Icon(Icons.lightbulb),
-            onPressed: _toggleTheme,
+            onPressed: () {
+              Get.changeThemeMode(Get.isDarkMode ? ThemeMode.light : ThemeMode.dark);
+            },
           ),
         ],
       ),
@@ -50,12 +49,7 @@ class _InputPageState extends State<InputPage> {
             ElevatedButton(
               onPressed: () {
                 final username = usernameController.text;
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => HomePage(username: username),
-                  ),
-                );
+                Get.to(() => HomePage(username: username));
               },
               child: Text('Go to Home'),
             ),
@@ -65,4 +59,3 @@ class _InputPageState extends State<InputPage> {
     );
   }
 }
-
