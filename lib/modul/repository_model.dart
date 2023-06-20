@@ -12,7 +12,7 @@ class GitHubRepository {
     required this.stars,
     required this.language,
     required this.createdAt,
-    required this.htmlUrl,
+    required this.htmlUrl, required forked,
   });
 
   factory GitHubRepository.fromJson(Map<String, dynamic> json) {
@@ -23,6 +23,9 @@ class GitHubRepository {
       language: json['language'] ?? '',
       createdAt: json['created_at'],
       htmlUrl: json['html_url'],
+      forked: json['fork']
     );
   }
+
+  get forked => null;
 }
