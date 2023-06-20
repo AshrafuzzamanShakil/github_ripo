@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:github_rioi/home_page.dart';
+import 'package:github_rioi/pages/home_page.dart';
 
 class InputPage extends StatefulWidget {
   @override

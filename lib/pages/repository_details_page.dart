@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:github_rioi/repository_model.dart';
+import 'package:github_rioi/modul/repository_model.dart';
 class RepositoryDetailsPage extends StatelessWidget {
   final GitHubRepository repository;
 

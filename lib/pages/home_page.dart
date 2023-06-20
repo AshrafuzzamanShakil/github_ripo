@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:github_rioi/repository_model.dart';
-import 'package:github_rioi/repository_details_page.dart';
-import 'package:github_rioi/user_model.dart';
+import 'package:github_rioi/modul/repository_model.dart';
+import 'package:github_rioi/pages/repository_details_page.dart';
+import 'package:github_rioi/modul/user_model.dart';
 
 class HomePage extends StatefulWidget {
   final String username;
